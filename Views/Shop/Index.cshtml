@@ -1,0 +1,225 @@
+﻿@model IEnumerable<PaypalLab.Models.Product>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Shop</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Image)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ProductName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Currency)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+
+@foreach (var item in Model) {
+        <tr>
+                <td>
+                    <img src="/images/@item.Image" style="max-width:100px">
+                </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ProductName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <text id="@item.ID-itemPrice">@item.Price</text>
+            </td>
+            <td>
+                    <text id="currency">@item.Currency</text>
+            </td>
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <td>
+                        <input type="button" value="Add To Cart" id="@item.ID-add" onclick=updateShoppingCart(event)>
+                <input type="button" value="Remove To Cart" id="@item.ID-remove" onclick=updateShoppingCart(event)>
+                <span>Quantity:</span>
+                <span id="@item.ID-quantity" class="quantity">0</span>
+                <span>Amount: </span>
+                <span id="@item.ID-amount" class="amount">0</span>
+            </td>}
+
+            </tr>
+            }
+        </tbody>
+    </table>
+
+@if (User.Identity.IsAuthenticated)
+{
+    <div>
+        <h3>Total:</h3>
+        $<span id="totalAmount" class="totalAmount">0</span>
+    </div>
+    <br />
+
+    <div id="paypal-button"></div>
+    <script src="https://www.paypalobjects.com/api/checkout.js"></script>
+}
+
+
+@if (!User.Identity.IsAuthenticated)
+{
+    <button>
+        <a class="nav-link text-dark" href="/Identity/Account/Login">Login</a>
+    </button>
+}
+
+
+        <script>
+            function updateShoppingCart(event) {
+            var clickedId = event.target.id;
+            var elementIdSplit = clickedId.split('-');
+            var id = elementIdSplit[0];
+            var action = elementIdSplit[1];
+            var buttonType = elementIdSplit[2];
+
+            ChangeCart(id, action, buttonType);
+            }
+
+            function ChangeCart(clickedId, action) {
+            var itemPriceId = "#" + clickedId + "-itemPrice";
+            var cartQtyId = "#" + clickedId + "-quantity";
+            var cartAmtId = "#" + clickedId + "-amount";
+
+            var quantity = $(cartQtyId).html();
+
+            if (action == "add") {
+            quantity++;
+            } else {
+            quantity--;
+            if (quantity < 0) {
+            quantity = 0;
+            }
+            }
+
+            $(cartQtyId).text(quantity);
+
+            //Calculate new amount
+            var amount = $(itemPriceId).html();
+
+            var newAmount = (amount * quantity).toFixed(2);
+
+            $(cartAmtId).text(newAmount);
+
+            var totalItemsId = "#totalItems";
+            var totalAmountId = "#totalAmount";
+
+            //Calculate totals
+            var totalQuantity = 0;
+            $('.quantity').each(function () {
+            var thisQuantity = $(this).html();
+            totalQuantity += parseInt(thisQuantity);
+            });
+            var totalAmount = 0.00;
+            $('.amount').each(function () {
+            var thisAmount = $(this).html();
+            totalAmount += parseFloat(thisAmount);
+            });
+
+            $("#totalItems").text(totalQuantity);
+            $("#totalAmount").text(totalAmount.toFixed(2));
+            }
+        </script>
+
+        <script>
+
+                paypal.Button.render({
+                    env: 'sandbox', 
+                    style: { 
+                        size: 'small',
+                        color: 'gold',
+                        shape: 'pill',
+                        label: 'checkout'
+                    },
+                    client: {
+                        // You need to change this to your client ID
+                        sandbox: 'AY6FwsqKZKOJ2wSYZM6Idv2oinvnUMKMepprrSKvg_JpwRo_r2PkuTp0O5yBpNM2uZqWc6UUnHXUho3W',
+                        // production: '3W8F5EEJKUJP4KSY'  // Switch to ‘production’ when live.
+                    },
+
+                    commit: true, 
+
+                    payment: function (data, actions) {
+                        return actions.payment.create({
+                            payment: {
+                                transactions: [{
+
+                                    custom: 'Custom data goes here!',
+                                    amount: { total:
+                                              document.getElementById("itemPrice").innerHTML
+                                            , currency:
+                                              document.getElementById("currency").innerHTML
+                                    }
+                                }]
+                            }
+                        });
+                    },
+
+                    onAuthorize: function (data, actions) {
+                        return actions.payment.execute().then(function (payment) {
+                            console.log("This is what comes back from Paypal: ")
+                            console.log(payment);
+                            alert("This JSON is from Paypal: " + JSON.stringify(payment));
+                            console.log("-------------------------------------")
+                            var dataObject = {
+                                "cart": payment.cart,
+                                "intent": payment.intent,
+                                "paymentID": payment.id,
+                                "create_time": payment.create_time,
+                                "paymentState": payment.state,
+                                "payerEmail": payment.payer.payer_info.email,
+                                "payerID": payment.payer.payer_info.payer_id,
+                                "payerFirstName": payment.payer.payer_info.first_name,
+                                "payerLastName": payment.payer.payer_info.last_name,
+                                "payerMiddleName": payment.payer.payer_info.middle_name,
+                                "payerCountryCode": payment.payer.payer_info.country_code,
+                                "paymentMethod": payment.payer.payment_method,
+                                "payerStatus": payment.payer.status,
+                                "amount": payment.transactions[0].amount.total,
+                                "currency": payment.transactions[0].amount.currency,
+                                "custom": payment.transactions[0].custom
+                            }
+
+
+                            $.ajax({
+                                type: "post",
+                                url: "/Home/PaySuccess",
+                                data: JSON.stringify(dataObject),
+                                contentType: "application/json; charset=utf-8",
+                                dataType: "json",
+
+                                success: function (msg) {
+                                    console.log("Data: " + JSON.stringify(data));
+                                    window.location.href
+                                        = "/Home/Confirmation?confirmationId=" + data.paymentID;
+                                },
+
+                                error: function (msg) {
+                                    alert("fail: " + JSON.stringify(msg));
+                                }
+                            });
+                        })
+                    },
+
+                    onCancel: function (data, actions) {
+                    },
+                }, '#paypal-button');
+            </script>
+

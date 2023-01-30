@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - PaypalLab</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/PaypalLab.styles.css" asp-append-version="true" />
+</head>
+<body>
+    <header>
+        <nav b-6eg8tbgho9="" class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div b-6eg8tbgho9="" class="container-fluid">
+                <a class="navbar-brand" href="/">
+                    <img src="/images/deckmaster.png" style="max-width:100px">
+                </a>
+                <button b-6eg8tbgho9="" class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span b-6eg8tbgho9="" class="navbar-toggler-icon"></span>
+                </button>
+                <div b-6eg8tbgho9="" class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                    <ul b-6eg8tbgho9="" class="navbar-nav flex-grow-1">
+                        <li b-6eg8tbgho9="" class="nav-item">
+                            <a class="nav-link text-dark" href="/">Home</a>
+                        </li>
+                        <li b-6eg8tbgho9="" class="nav-item">
+                            <a class="nav-link text-dark" href="/Home/Confirmation">Confirmation</a>
+                        </li>
+                        <li b-6eg8tbgho9="" class="nav-item">
+                            <a class="nav-link text-dark" href="/Shop/Index">Shop</a>
+                        </li>
+
+                        @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                        {
+                            <li>
+                                <a asp-area="" class="nav-link text-dark" asp-controller="Role"
+                               asp-action="Index">Roles</a>
+                            </li>
+                            <li>
+                                <a asp-area="" class="nav-link text-dark" asp-controller="UserRole"
+                               asp-action="Index">
+                                Users
+                            </a>
+                        </li>
+                        }
+                        @if (User.IsInRole("Manager"))
+                        {
+                            <li b-6eg8tbgho9="" class="nav-item">
+                                <a class="nav-link text-dark" href="/Home/Transactions">Transactions</a>
+                        </li>}
+                    </ul>
+                    <partial name="_LoginPartial" />
+
+                </div>
+            </div>
+        </nav>
+    </header>
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted">
+        <div class="container">
+            &copy; 2023 - PaypalLab
+        </div>
+    </footer>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

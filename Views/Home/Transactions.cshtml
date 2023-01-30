@@ -1,0 +1,66 @@
+﻿@model IEnumerable<IPN>
+
+@{
+    ViewData["Title"] = "Transactions";
+}
+
+<h1>Transactions</h1>
+
+<div class="col-sm-6" style></div>
+<span class="d-flex justify-content-end">
+    <img src="/images/paypal.png" alt="PayPal" style="max-width: 200px;padding-bottom: 10px;">
+</span>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Payment ID
+            </th>
+            <th>
+                Created
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Email
+            </th>
+            <th>
+                Amount
+            </th>
+            <th>
+                Payment Method
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.paymentID)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.create_time)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.payerFirstName)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.payerEmail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.amount) @Html.DisplayFor(modelItem => item.currency)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.paymentMethod)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.paymentID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.paymentID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.paymentID">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

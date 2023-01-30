@@ -1,0 +1,32 @@
+﻿@model PaypalLab.Models.IPN
+
+
+<body>
+    <div b-6eg8tbgho9="" class="container">
+        <div b-6eg8tbgho9="" style="text-align: center;">
+            <div b-6eg8tbgho9="" class="display-6"><strong b-6eg8tbgho9="">Deck Master</strong></div>
+        </div>
+        <hr b-6eg8tbgho9="">
+        <main b-6eg8tbgho9="" role="main" class="pb-3">
+            <br><br>
+            <div class="text-success">
+                <div class="text-center">
+                    <div class="text-center">
+                        <span class="text-center">
+                            <span style="font-size: 2em;">Congratulations @Model.payerFirstName!</span><br><br><br><br>
+                            <span style="font-size: 1.4em;">
+                                <span>Your $ @Model.amount</span><span>3.55</span>
+                                <span>USD</span>
+                                <span>PayPal transaction was successful.</span>
+                            </span>
+                        </span><br><br>
+                        <span class="text-center" style="font-size: 1.2em;">Keep this transaction Id for future reference.</span>
+
+                        <span style="color: black; font-size: 1.2em;">@Model.paymentID</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+</body>
