@@ -5,7 +5,7 @@ using PaypalLab.ViewModels;
 
 namespace PaypalLab.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
     public class RoleController : Controller
     {
         ApplicationDbContext _context;
@@ -31,8 +31,10 @@ namespace PaypalLab.Controllers
 
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult Create(RoleVM createRole)
         {
+            var token = HttpContext.Request.Form["__RequestVerificationToken"];
 
             if (ModelState.IsValid)
             {

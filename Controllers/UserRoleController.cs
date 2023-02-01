@@ -6,7 +6,7 @@ using PaypalLab.ViewModels;
 
 namespace PaypalLab.Controllers
 {
-    [Authorize(Roles = "Admin, Manager")]
+    //[Authorize(Roles = "Admin, Manager")]
     public class UserRoleController : Controller
     {
         private ApplicationDbContext _context;
